@@ -46,31 +46,28 @@ class UserLogin extends Component {
   }
 
   getDatabaseInfo() {
-    const entryRef = firebase.database().ref("entries");
-    const entryData =[];
-    entryRef.on('value',snap => {
+    const parkRef = firebase.database().ref("parkList");
+    console.log('fetching database data')
+    parkRef.once('value', snap => {
+      let parks = snap.val();
+      let parkState = [];
+      for(let park in parks) {
+        parkState.push({
+          name: park,
+          coasters: parks[park].coasters
+        });
+      }
        this.setState({
-         data: snap.val()
+         parks: parkState
        });
-      //  snap.forEach(function(entryNodes){
-      //    console.log(entryNodes.val().entryDate);
-      //    console.log(entryNodes.val().entryTitle);
-      //     // const entryArray = entryData.push(entryNodes.val().entryDate);
-      //     // console.log(entryArray);
-      //  });
-      //  this.setState({
-      //    message: entryArray
-      //  });
     });
   }
+
 loginWithFacebook() {
-  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
-     .then(function() {
-       return firebase.auth().signInWithPopup(fbProvider).then(function(result) {
-         var token = result.credential.accessToken;
-         this.setState({user: result.user, isLoggedIn: true});
-       })
-     }.bind(this));
+  firebase.auth().signInWithPopup(fbProvider).then(function(result) {
+    var token = result.credential.accessToken;
+    this.setState({user: result.user, isLoggedIn: true});
+  }.bind(this));
 };
 
   loginWithGoogle() {
@@ -95,10 +92,6 @@ loginWithFacebook() {
   render() {
     return (
       <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React my guy</h2>
-        </div>
           <h3>{this.state.message}</h3>
 
         <h5>{this.state.isLoggedIn ? this.state.user.displayName : this.state.user}</h5>
@@ -109,6 +102,7 @@ loginWithFacebook() {
         <button onClick={this.loginWithTwitter.bind(this)}>Login with Twitter</button></div>}
         {this.state.isLoggedIn && <button onClick={this.logOut.bind(this)}>Log Out</button>}
 
+        <div>{this.state.parks}</div>
       </div>
     )
   }
