@@ -5,6 +5,7 @@ import Navigation from './Navigation'
 import UserLogin from './UserLogin'
 import Journal from './Journal'
 import Parks from './Parks'
+import ParkDetails from './ParkDetails'
 
 class Layout extends Component {
   render() {
@@ -15,6 +16,7 @@ class Layout extends Component {
           <Route path='/login' component={UserLogin} />
           <Route path='/journal' component={Journal} />
           <Route path='/parks' component={Parks} />
+          <Route path='/parks/:parkId' component={ParkDetails}></Route>
         </div>
       </HashRouter>
     )

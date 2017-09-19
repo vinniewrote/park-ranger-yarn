@@ -101,8 +101,6 @@ loginWithFacebook() {
         <button onClick={this.loginWithGoogle.bind(this)}>Login with Google</button>
         <button onClick={this.loginWithTwitter.bind(this)}>Login with Twitter</button></div>}
         {this.state.isLoggedIn && <button onClick={this.logOut.bind(this)}>Log Out</button>}
-
-        <div>{this.state.parks}</div>
       </div>
     )
   }
