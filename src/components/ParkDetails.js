@@ -1,8 +1,9 @@
 import React, { Component }  from 'react'
-import ReactRouter from 'react-router';
-import { Link } from 'react-router';
-import Deets from './ThemeParkDetails';
-import { browserHistory } from 'react-router';
+import ReactRouter from 'react-router'
+import { Link } from 'react-router'
+import Deets from './ThemeParkDetails'
+import parkListing from '../data/great_america'
+import { browserHistory } from 'react-router'
 
 class ParkDetails extends React.Component {
   constructor(props) {

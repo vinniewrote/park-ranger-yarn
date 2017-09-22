@@ -1,16 +1,11 @@
 import React, { Component }  from 'react'
-import * as firebase from 'firebase'
-import {config} from '../data/keys'
-
-firebase.initializeApp(config)
-
-const fbProvider = new firebase.auth.FacebookAuthProvider();
-const googleProvider = new firebase.auth.GoogleAuthProvider();
-const twitterProvider = new firebase.auth.TwitterAuthProvider();
+import {firebase, database, auth, fbProvider, googleProvider, twitterProvider} from './Firebase'
+import map from 'lodash/map'
+import Nav from './Navigation'
 
 const defaultMessaging = {
   message: "Welcome. Please login for the full Park Ranger experience",
-  user: "unknown user. login so we can know you"
+  user: "i dont know you. login so we can meet"
 };
 
 class UserLogin extends Component {
@@ -18,90 +13,86 @@ class UserLogin extends Component {
     super();
     this.state = {
       ...defaultMessaging,
-      isLoggedIn: false
+      isLoggedIn: null,
+      parks: []
     };
+
+    this.parkListRef = database.ref('parks/0/coasters');
   }
 
   componentDidMount() {
-    if (this.state.isLoggedIn) {
+    auth.onAuthStateChanged((isLoggedIn) => {
+      this.setState({message: "Thank you for logging in", isLoggedIn})
+      console.log('youre still logged in homie', isLoggedIn)
       this.getDatabaseInfo();
-    }
+    })
 
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        console.log('user is signed in');
-      } else {
-        console.log('no user signed in');
-      }
-    });
   }
 
   componentDidUpdate(prevProps, prevState) {
     const prevLoggedIn = prevState && prevState.isLoggedIn;
     const loggedIn = this.state.isLoggedIn;
-
-    if (loggedIn && !prevLoggedIn) {
-      this.getDatabaseInfo();
-    }
   }
 
   getDatabaseInfo() {
-    const parkRef = firebase.database().ref("parkList");
     console.log('fetching database data')
-    parkRef.once('value', snap => {
-      let parks = snap.val();
-      let parkState = [];
-      for(let park in parks) {
-        parkState.push({
-          name: park,
-          coasters: parks[park].coasters
-        });
-      }
-       this.setState({
-         parks: parkState
-       });
+    this.parkListRef.once('value', snap => {
+      console.log(snap.val())
+      this.setState({parks: snap.val()})
     });
   }
 
 loginWithFacebook() {
-  firebase.auth().signInWithPopup(fbProvider).then(function(result) {
+  auth.signInWithPopup(fbProvider).then(function(result) {
     var token = result.credential.accessToken;
     this.setState({user: result.user, isLoggedIn: true});
   }.bind(this));
 };
 
   loginWithGoogle() {
-    firebase.auth().signInWithPopup(googleProvider).then(function(result) {
+    auth.signInWithPopup(googleProvider).then(function(result) {
       var token = result.credential.accessToken;
       this.setState({user: result.user, isLoggedIn: true});
   }.bind(this));
 };
 
   loginWithTwitter() {
-    firebase.auth().signInWithPopup(twitterProvider).then(function(result) {
+    auth.signInWithPopup(twitterProvider).then(function(result) {
       var token = result.credential.accessToken;
       this.setState({user: result.user, isLoggedIn: true});
     }.bind(this));
   };
 
   logOut() {
-    firebase.auth().signOut().then(function() {
+    auth.signOut().then(function() {
       this.setState({user: null, isLoggedIn: false, ...defaultMessaging});
     }.bind(this));
   };
   render() {
     return (
       <div className="App">
-          <h3>{this.state.message}</h3>
+        <h3>{this.state.message}</h3>
+        {!this.state.isLoggedIn &&
+        <div>
+          <h5>{this.state.user}</h5>
+          <button onClick={this.loginWithFacebook.bind(this)}>Login with Facebook</button>
+          <button onClick={this.loginWithGoogle.bind(this)}>Login with Google</button>
+          <button onClick={this.loginWithTwitter.bind(this)}>Login with Twitter</button>
+        </div>
+        }
 
-        <h5>{this.state.isLoggedIn ? this.state.user.displayName : this.state.user}</h5>
-        <img src={this.state.user.photoURL} />
-
-        {!this.state.isLoggedIn && <div><button onClick={this.loginWithFacebook.bind(this)}>Login with Facebook</button>
-        <button onClick={this.loginWithGoogle.bind(this)}>Login with Google</button>
-        <button onClick={this.loginWithTwitter.bind(this)}>Login with Twitter</button></div>}
-        {this.state.isLoggedIn && <button onClick={this.logOut.bind(this)}>Log Out</button>}
+        {this.state.isLoggedIn &&
+          <div>
+            <h5>{this.state.isLoggedIn.displayName}</h5>
+            <h5>{this.state.isLoggedIn.email}</h5>
+            <img src={this.state.isLoggedIn.photoURL} alt={this.state.isLoggedIn.displayName}/>
+            <button onClick={this.logOut.bind(this)}>Log Out</button>
+            {this.state.parks.map((park, key) => <p key={key} className={park.coasterActive}>{park.coasterName}</p>)}
+          </div>
+        }
+        <Nav />
       </div>
+
     )
   }
 }

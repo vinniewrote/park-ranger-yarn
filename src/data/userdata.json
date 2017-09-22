@@ -1,0 +1,38 @@
+{
+"user-content":[
+  {
+    "username": "vfreeman312@gmail.com",
+    "journals": [
+      {
+        "date": "20092017",
+        "park": "SixFlagsGreatAmerica",
+        "coasters": [
+          {
+            "1": "American Eagle (Blue)",
+            "2": "Batman: The Ride"
+          }
+        ],
+        "attractions": [
+          {
+            "1": "Condor",
+            "2": "Giant Drop"
+          }
+        ],
+        "restaurants": [
+          {
+            "1": "Antoine’s Funnel Cakes",
+            "2": "County Fair Dippin' Dots"
+          }
+        ],
+        "shops": [
+          {
+            "1": "Batman Kiosk",
+            "2": "Justice League: Battle for Metropolis Gift Shop"
+          }
+        ],
+        "content": "lorem ipsume obfsobv ybfibsjdbk bkdhbkfbsibvdkjbsvdkjvdb kbsdvkhbkdshbvkhsb vk vsdkhbvdkvbksvdbkvdshb"
+      }
+    ]
+  }
+]
+}

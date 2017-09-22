@@ -12,7 +12,7 @@ class Layout extends Component {
     return (
       <HashRouter>
         <div>
-          <Route exact path='/' component={Navigation} />
+          <Route exact path='/' component={UserLogin} />
           <Route path='/login' component={UserLogin} />
           <Route path='/journal' component={Journal} />
           <Route path='/parks' component={Parks} />

@@ -1,6 +1,5 @@
 import React, { Component }  from 'react'
 import {Link} from 'react-router-dom'
-import parkListing from '../data/great_america'
 
 class ParkSelect extends Component {
   render() {
